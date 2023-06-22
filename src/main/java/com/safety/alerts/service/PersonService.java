@@ -1,50 +1,86 @@
 package com.safety.alerts.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.safety.alerts.mapper.JSONMapperImpl;
+import com.safety.alerts.model.MedicalRecord;
 import com.safety.alerts.model.Person;
-import com.safety.alerts.repository.PersonRepository;
-import lombok.Data;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.safety.alerts.repository.FirestationRepositoryImpl;
+import com.safety.alerts.repository.MedicalRecordRepositoryImpl;
+import com.safety.alerts.repository.PersonRepositoryImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@Data
-public class PersonService {
+public class PersonService implements IPersonService{
 
-    @Autowired
-    private PersonRepository personRepository;
+    private static final Logger logger = LoggerFactory.getLogger(PersonService.class);
 
-    public PersonService(PersonRepository personRepository) {
-        this.personRepository = personRepository;
+    private JSONMapperImpl jsonMapper;
+    private PersonRepositoryImpl personRepository;
+    private MedicalRecordRepositoryImpl medicalRecordRepository;
+    private FirestationRepositoryImpl firestationRepository;
+    private ArrayList<Person> persons;
+    private ArrayList<MedicalRecord> medicalRecords;
+
+    public PersonService() throws IOException {
+        this.jsonMapper = new JSONMapperImpl(new ObjectMapper());
+        this.personRepository = new PersonRepositoryImpl(new ArrayList<>(this.jsonMapper.getResponse().getPersons()));
+        this.medicalRecordRepository = new MedicalRecordRepositoryImpl(new ArrayList<>(this.jsonMapper.getResponse().getMedicalRecords()));
+        this.firestationRepository = new FirestationRepositoryImpl(new ArrayList<>(this.jsonMapper.getResponse().getFirestations()));
     }
 
-    public List<Person> getPerson() {
-        return personRepository.findAll();
+    @Override
+    public List<Person> getall() {
+        return this.personRepository.getAll();
     }
 
+    @Override
+    public Person getPerson(String email) {
+        return this.personRepository.getPerson(email);
+    }
+
+    @Override
     public Person addPerson(Person person) {
-        return personRepository.addPerson(person);
+        if(getPerson(person.getEmail()) != null) {
+            logger.info("Add person failed");
+            return null;
+        }
+        logger.info("Add person successful");
+        return this.personRepository.addPerson(person);
     }
 
-    public Person updatePerson(Person person, String firstName, String lastname) {
-        return personRepository.updatePerson(person, firstName, lastname);
+    @Override
+    public Person updatePerson(Person person) {
+        if(getPerson(person.getEmail()) != null) {
+            logger.info("Updating person is successful");
+            return this.personRepository.updatePerson(person);
+        }
+        logger.error("Updating person failed");
+        return null ;
     }
 
-    public void deletePerson(Person person, String firstName, String lastName) {
-        personRepository.deleteByFirstAndLastName(firstName, lastName);
+    @Override
+    public Boolean deletePerson(String firstName, String lastName) {
+        List<Person> personToDelete = this.personRepository.getPersonByFirstAndLastName(firstName, lastName);
+        for(Person person : personToDelete) {
+            this.personRepository.deletePerson(person);
+            return true;
+        }
+        return false;
     }
 
-    public List<Person> findPersonByLastName(String lastName) {
-        return personRepository.findByLastName(lastName);
+    @Override
+    public List<Person> getPersonByAddress(String address) {
+        return this.personRepository.getPersonsByAddress(address);
     }
 
-    public List<Person> findByCity(String city) {
-        return personRepository.findByCity(city);
+    @Override
+    public List<String> getEmailByCity(String city) {
+        return this.personRepository.getEmailByCity(city);
     }
-
-    public List<Person> findByAddress(String address) {
-        return personRepository.findByAddress(address);
-    }
-
 }

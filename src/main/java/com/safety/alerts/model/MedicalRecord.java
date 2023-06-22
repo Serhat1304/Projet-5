@@ -3,6 +3,7 @@ package com.safety.alerts.model;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 public class MedicalRecord {
@@ -10,7 +11,7 @@ public class MedicalRecord {
     private String firstName;
     private String lastName;
     private String birthDate;
-    private String medications;
-    private String allergies;
+    private List<String> medications;
+    private List<String> allergies;
 
 }

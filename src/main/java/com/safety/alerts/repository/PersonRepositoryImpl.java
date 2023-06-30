@@ -1,108 +1,74 @@
 package com.safety.alerts.repository;
 
 import com.safety.alerts.model.Person;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Repository
+@Log4j2
 public class PersonRepositoryImpl implements IPersonRepository {
 
-    private final static Logger logger = LoggerFactory.getLogger(PersonRepositoryImpl.class);
+    private List<Person> persons;
 
-    private ArrayList<Person> persons;
-
-    public PersonRepositoryImpl(ArrayList<Person> persons) {
-        if(this.persons == null){
-            this.persons = new ArrayList<>();
-        }
-        this.persons.addAll(persons);
+    public PersonRepositoryImpl(List<Person> persons) {
+        this.persons = new ArrayList<>(persons);
     }
 
     @Override
     public List<Person> getAll() {
-        return this.persons;
+        return new ArrayList<>(persons);
     }
 
     @Override
     public Person getPerson(String email) {
-        for(Person person : this.persons) {
-            if(Objects.equals(person.getEmail(), email)) {
-                return person;
-            }
-        }
-        return null;
+        return persons.stream()
+                .filter(person -> Objects.equals(person.getEmail(), email))
+                .findFirst()
+                .orElse(null);
     }
 
     @Override
     public Person addPerson(Person person) {
-        this.persons.add(person);
+        persons.add(person);
         return person;
     }
 
     @Override
-    public Person deletePerson(Person person) {
-        this.persons.remove(person);
-        return person;
+    public void deletePerson(Person person) {
+        persons.remove(person);
     }
 
     @Override
     public Person updatePerson(Person person) {
-        this.persons.set(getAll().indexOf(getPerson(person.getEmail())), person);
+        persons.set(persons.indexOf(person),person);
+        log.info("Updating person is successful");
         return person;
     }
 
     @Override
     public List<Person> getPersonsByAddress(String address) {
-
-        List<Person> personsByAddress = new ArrayList<>();
-
-        for(Person person : this.persons) {
-            if(Objects.equals(person.getAddress(), address)) {
-                logger.info("Request getting persons by address successful");
-                personsByAddress.add(person);
-            }
-
-            }
-        if(personsByAddress.isEmpty()) {
-            logger.info("Request getting persons failed");
-        }
-        return personsByAddress;
-
+        return persons.stream()
+                .filter(person -> Objects.equals(person.getAddress(), address))
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<String> getEmailByCity(String city) {
-        List<String> emailByCityList = new ArrayList<>();
-
-        for(Person person : getAll()) {
-            if(person.getCity().compareTo(city) == 0) {
-                logger.info("Request getting email by city is successful");
-                emailByCityList.add(person.getEmail());
-            }
-        }
-        if (emailByCityList.isEmpty()) {
-            logger.info("Request getting email failed");
-        }
-        return emailByCityList;
+        return persons.stream()
+                .filter(person -> person.getCity().equalsIgnoreCase(city))
+                .map(Person::getEmail)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public List<Person> getPersonByFirstAndLastName(String FirstName, String LastName) {
-        List<Person> personByFirstAndLastNameList = new ArrayList<>();
-
-        for(Person person : this.persons) {
-            if(person.getFirstName() != null && person.equals(FirstName) && person.getLastName() != null && person.equals(LastName)) {
-                logger.info("Request getting person by first and last name is successful");
-            }
-        }
-        if(personByFirstAndLastNameList.isEmpty()) {
-            logger.info("Request getting by first and last name failed");
-        }
-        return personByFirstAndLastNameList;
+    public List<Person> getPersonByFirstAndLastName(String firstName, String lastName) {
+        return persons.stream()
+                .filter(person -> Objects.equals(person.getFirstName(), firstName) && Objects.equals(person.getLastName(), lastName))
+                .collect(Collectors.toList());
     }
 }

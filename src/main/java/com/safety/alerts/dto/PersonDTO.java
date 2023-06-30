@@ -1,23 +1,14 @@
-package com.safety.alerts.model;
-
+package com.safety.alerts.dto;
 
 import lombok.Data;
 
 @Data
-public class Person {
-
-    private String zip;
-
+public class PersonDTO {
     private String firstName;
-
     private String lastName;
-
     private String address;
-
     private String city;
-
+    private String zip;
     private String phone;
-
     private String email;
-
 }

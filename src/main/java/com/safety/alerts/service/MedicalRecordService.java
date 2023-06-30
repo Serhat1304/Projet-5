@@ -1,119 +1,74 @@
 package com.safety.alerts.service;
-
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.safety.alerts.mapper.JSONMapperImpl;
+import com.safety.alerts.dto.MedicalRecordDTO;
+import com.safety.alerts.mapper.MedicalRecordMapper;
 import com.safety.alerts.model.MedicalRecord;
-import com.safety.alerts.model.Person;
-import com.safety.alerts.repository.MedicalRecordRepositoryImpl;
-import com.safety.alerts.repository.PersonRepositoryImpl;
+import com.safety.alerts.util.DataHolder;
 import lombok.Data;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.time.LocalDate;
-import java.time.Period;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
+import java.util.stream.Collectors;
 
 @Service
 @Data
+@Log4j2
 public class MedicalRecordService implements IMedicalRecordService {
 
-    private static final Logger logger = LoggerFactory.getLogger(MedicalRecordService.class);
+    private final MedicalRecordMapper medicalRecordMapper;
+    private final DataHolder dataHolder;
 
-    private JSONMapperImpl jsonMapper;
-    private MedicalRecordRepositoryImpl medicalRecordRepository;
-    private PersonRepositoryImpl personRepository;
-    private ArrayList<MedicalRecord> medicalRecords;
-
-    public MedicalRecordService() throws IOException {
-        this.jsonMapper = new JSONMapperImpl(new ObjectMapper());
-        this.medicalRecordRepository = new MedicalRecordRepositoryImpl(new ArrayList<>(this.jsonMapper.getResponse().getMedicalRecords()));
-        this.personRepository = new PersonRepositoryImpl(new ArrayList<>(this.jsonMapper.getResponse().getPersons()));
+    public MedicalRecordService(MedicalRecordMapper medicalRecordMapper, DataHolder dataHolder) {
+        this.medicalRecordMapper = medicalRecordMapper;
+        this.dataHolder = dataHolder;
     }
 
 
     @Override
-    public List<MedicalRecord> getAll() {
-        return this.medicalRecordRepository.getAll();
+    public List<MedicalRecordDTO> getAll() {
+        List<MedicalRecord> medicalRecords = dataHolder.getResponse().getMedicalRecords();
+        return medicalRecords.stream()
+                .map(medicalRecordMapper::map)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public MedicalRecord getMedicalRecords(String birthdate) {
-        return this.medicalRecordRepository.getMedicalRecords(birthdate);
+    public MedicalRecordDTO getMedicalRecord(String firstName, String lastName) {
+        List<MedicalRecord> medicalRecords = dataHolder.getResponse().getMedicalRecords();
+        return medicalRecords.stream()
+                .filter(medicalRecord -> medicalRecord.getFirstName().equals(firstName) &&
+                        medicalRecord.getLastName().equals(lastName))
+                .map(medicalRecordMapper::map)
+                .findFirst()
+                .orElse(null);
     }
 
     @Override
-    public Boolean deleteMedicalRecords(String firstName, String lastName){
-        MedicalRecord medicalRecord = this.medicalRecordRepository.getMedicalRecordsByFirstAndLastName(firstName, lastName);
-        if (medicalRecord != null){
-            this.medicalRecordRepository.deleteMedicalRecords(medicalRecord);
-            return true;
-        }return false;
+    public MedicalRecordDTO addMedicalRecord(MedicalRecordDTO medicalRecordDTO) {
+        MedicalRecord medicalRecord = medicalRecordMapper.map(medicalRecordDTO);
+        dataHolder.getResponse().getMedicalRecords().add(medicalRecord);
+        return medicalRecordMapper.map(medicalRecord);
     }
 
     @Override
-    public MedicalRecord updateMedicalRecords(MedicalRecord medicalRecord) {
-        if(this.medicalRecordRepository.getMedicalRecordsByFirstAndLastName(medicalRecord.getFirstName(), medicalRecord.getLastName()) != null) {
-            logger.info("Request successful");
-            return  this.medicalRecordRepository.updateMedicalRecords(medicalRecord);
-        }logger.error("Medical record not found");
+    public MedicalRecordDTO updateMedicalRecord(MedicalRecordDTO medicalRecordDTO) {
+        List<MedicalRecord> medicalRecords = dataHolder.getResponse().getMedicalRecords();
+        for (MedicalRecord medicalRecord : medicalRecords) {
+            if (medicalRecord.getFirstName().equals(medicalRecordDTO.getFirstName())&&
+            medicalRecord.getLastName().equals(medicalRecordDTO.getLastName())) {
+                medicalRecord.setBirthDate(medicalRecordDTO.getBirthDate());
+                medicalRecord.setMedications(medicalRecordDTO.getMedications());
+                medicalRecord.setAllergies(medicalRecordDTO.getAllergies());
+                return medicalRecordMapper.map(medicalRecord);
+            }
+        }
         return null;
     }
 
     @Override
-    public MedicalRecord addMedicalRecords(MedicalRecord medicalRecord) {
-            if(getMedicalRecords(medicalRecord.getBirthDate()) != null) {
-                logger.error("Medical record already exist ");
-            }
-            return this.medicalRecordRepository.addMedicalRecords(medicalRecord);
+    public void deleteMedicalRecord(String firstName, String lastName) {
+        List<MedicalRecord> medicalRecords = dataHolder.getResponse().getMedicalRecords();
+        medicalRecords.removeIf(medicalRecord    -> medicalRecord.getFirstName().equals(firstName) &&
+                medicalRecord.getLastName().equals(lastName));
     }
-
-    @Override
-    public List<String> getMedicationsFromPerson(Person person) {
-        for(MedicalRecord medicalRecord : this.medicalRecords) {
-            if(person.getFirstName().equals(medicalRecord.getFirstName()) &&
-            person.getLastName().equals(medicalRecord.getLastName())) {
-                logger.info("Getting medications is successful");
-                return medicalRecord.getMedications();
-            }
-        }
-        logger.info("Getting medications failed");
-        return null;
-    }
-
-    @Override
-    public List<String> getAllergiesFromPerson(Person person) {
-        for(MedicalRecord medicalRecord : this.medicalRecords) {
-            if(person.getFirstName().equals(medicalRecord.getFirstName()) &&
-            person.getLastName().equals(medicalRecord.getLastName())) {
-                logger.info("Getting allergies is successful");
-                return medicalRecord.getAllergies();
-            }
-        }
-        logger.info("Getting allergies failed");
-        return null;
-    }
-
-    @Override
-    public int calculateAgeFromBirthdate(String birthdate) {
-        LocalDate currentDate = LocalDate.now();
-        if(birthdate != null) {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-            formatter = formatter.withLocale(Locale.FRANCE);
-            LocalDate birthDate = LocalDate.parse(birthdate, formatter);
-            logger.info("Getting age is successful");
-            return Period.between(birthDate, currentDate).getYears();
-        }
-        logger.info("Getting age failed");
-        return 0;
-    }
-
 }

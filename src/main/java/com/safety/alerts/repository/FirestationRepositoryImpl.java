@@ -1,69 +1,70 @@
-package com.safety.alerts.repository;
+    package com.safety.alerts.repository;
 
-import com.safety.alerts.model.Firestation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Repository;
+    import com.safety.alerts.model.Firestation;
+    import lombok.extern.log4j.Log4j2;
+    import org.springframework.stereotype.Repository;
 
-import java.util.*;
+    import java.util.*;
 
-@Repository
-public class FirestationRepositoryImpl implements IFirestationRepository {
+    @Repository
+    @Log4j2
+    public class FirestationRepositoryImpl implements IFirestationRepository {
 
-    private static final Logger logger = LoggerFactory.getLogger(FirestationRepositoryImpl.class);
+        private List<Firestation> firestations;
 
-    private ArrayList<Firestation> firestations;
-
-    public FirestationRepositoryImpl(ArrayList<Firestation> firestations) {
-        if(this.firestations == null){
+        public FirestationRepositoryImpl() {
             this.firestations = new ArrayList<>();
         }
-        this.firestations.addAll(firestations);
-    }
 
-    @Override
-    public List<Firestation> getAll() {
-        return this.getAll();
-    }
-
-    @Override
-    public Firestation getFirestation(Integer station) {
-        for (Firestation firestation : this.firestations) {
-            if(Objects.equals(firestation.getStation(),station)) {
-                return firestation;
-            }
+        @Override
+        public List<Firestation> getAll() {
+            return new ArrayList<>(firestations);
         }
-        return null;
-    }
 
-    @Override
-    public Firestation addFirestation(Firestation firestation) {
-        this.firestations.add(firestation);
-        return firestation;
-    }
-
-    @Override
-    public Firestation deleteFirestation(Firestation firestation) {
-        this.firestations.remove(firestation);
-        return firestation;
-    }
-
-    @Override
-    public Firestation updateFirestation(Firestation firestation) {
-        this.firestations.set(getAll().indexOf(getFirestation(firestation.getStation())), firestation);
-        return firestation;
-    }
-
-    @Override
-    public Firestation getFirestationByAddress(String address) {
-        for(Firestation firestation : this.firestations) {
-            if(Objects.equals(firestation.getAddress(), address)) {
-                logger.info("Request getting firestation by address successful ");
-                return firestation;
+        @Override
+        public Firestation getFirestation(Integer station) {
+            for (Firestation firestation : firestations) {
+                if(Objects.equals(firestation.getStation(),station)) {
+                    return firestation;
+                }
             }
+            return null;
         }
-        logger.info("Request getting firestation by adsress failed");
-        return null;
-    }
 
-}
+        @Override
+        public Firestation addFirestation(Firestation firestation) {
+            firestations.add(firestation);
+            return firestation;
+        }
+
+        @Override
+        public void deleteFirestation(Firestation firestation) {
+            firestations.remove(firestation);
+        }
+
+        @Override
+        public Firestation updateFirestation(Firestation firestation) {
+            int index = firestations.indexOf(firestation);
+            if(index != -1) {
+                firestations.set(index, firestation);
+                log.info("Updated firestation is successful, with station number : {}", firestation.getStation());
+            }else{
+                log.error("Updated firestation is failed, with station number : {}", firestation.getStation());
+            }
+
+            return firestation;
+        }
+
+        @Override
+        public Firestation getFirestationByAddress(String address) {
+            for(Firestation firestation : firestations) {
+                if(Objects.equals(firestation.getAddress(), address)) {
+                    log.info("Request getting firestation by address successful ");
+                    return firestation;
+                }
+            }
+            log.error("Request getting firestation by adsress failed");
+            return null;
+        }
+
+    }

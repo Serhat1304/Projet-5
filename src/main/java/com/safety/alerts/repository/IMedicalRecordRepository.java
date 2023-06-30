@@ -8,14 +8,12 @@ public interface IMedicalRecordRepository {
 
     List<MedicalRecord> getAll();
 
-    MedicalRecord getMedicalRecords(String birthDate);
+    MedicalRecord getMedicalRecord(String firstName, String lastName);
 
-    MedicalRecord addMedicalRecords(MedicalRecord medicalRecord);
+    MedicalRecord addMedicalRecord(MedicalRecord medicalRecord);
 
-    MedicalRecord deleteMedicalRecords(MedicalRecord medicalRecord);
+    MedicalRecord deleteMedicalRecord(MedicalRecord medicalRecord);
 
-    MedicalRecord updateMedicalRecords(MedicalRecord medicalRecord);
-
-    MedicalRecord getMedicalRecordsByFirstAndLastName(String firstName, String lastName);
+    MedicalRecord updateMedicalRecord(MedicalRecord medicalRecord);
 
 }

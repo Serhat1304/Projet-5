@@ -1,21 +1,21 @@
 package com.safety.alerts.service;
 
+import com.safety.alerts.dto.FirestationDTO;
 import com.safety.alerts.model.Firestation;
 
 import java.util.List;
 
 public interface IFirestationService {
 
-    List<Firestation> getAll();
+    List<FirestationDTO> getAll();
 
-    Firestation getFirestation(Integer station);
+    FirestationDTO getFirestationByAddress(String address);
 
-    Firestation addFirestation(Firestation firestation);
+    FirestationDTO addFirestation(FirestationDTO firestationDTO);
 
-    Boolean deleteFirestation(Integer station);
+    FirestationDTO updateFirestation(String address, Integer station);
 
-    Firestation updateFirestation(Firestation firestation);
+    void deleteFirestation(String address, Integer station);
 
-    int getFirestationByPersonAddress(String address);
 
 }

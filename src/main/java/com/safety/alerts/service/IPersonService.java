@@ -1,18 +1,16 @@
 package com.safety.alerts.service;
 
 
-import com.safety.alerts.model.Person;
+import com.safety.alerts.dto.PersonDTO;
 
 import java.util.List;
 
 public interface IPersonService {
 
-    List<Person> getall();
-    Person getPerson(String email);
-    Person addPerson(Person person);
-    Person updatePerson(Person person);
-    Boolean deletePerson(String firstName, String lastName);
-    List<Person> getPersonByAddress(String address);
-    List<String> getEmailByCity(String city);
+    List<PersonDTO> getAll();
+    PersonDTO getPersonByEmail(String email);
+    PersonDTO addPerson(PersonDTO personDTO);
+    PersonDTO updatePerson(PersonDTO personDTO);
+    void deletePerson(String firstName, String lastName);
 
 }

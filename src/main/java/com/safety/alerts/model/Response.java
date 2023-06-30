@@ -6,8 +6,8 @@ import java.util.List;
 
 @Data
 public class Response {
-    List<Firestation> firestations;
-    List<Person> persons;
-    List<MedicalRecord> medicalRecords;
+    private List<Firestation> firestations;
+    private List<Person> persons;
+    private List<MedicalRecord> medicalRecords;
 
 }

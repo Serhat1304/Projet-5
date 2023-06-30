@@ -12,7 +12,7 @@ public interface IPersonRepository {
 
     Person addPerson(Person person);
 
-    Person deletePerson(Person person);
+    void deletePerson(Person person);
 
     Person updatePerson(Person person);
 
@@ -20,6 +20,6 @@ public interface IPersonRepository {
 
     List<String > getEmailByCity(String city);
 
-    List<Person> getPersonByFirstAndLastName(String FirstName, String LastName);
+    List<Person> getPersonByFirstAndLastName(String firstName, String lastName);
 
 }

@@ -12,7 +12,7 @@ public interface IFirestationRepository {
 
     Firestation addFirestation(Firestation firestation);
 
-    Firestation deleteFirestation(Firestation firestation);
+    void  deleteFirestation(Firestation firestation);
 
     Firestation updateFirestation(Firestation firestation);
 

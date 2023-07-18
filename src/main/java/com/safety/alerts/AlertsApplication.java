@@ -2,6 +2,7 @@ package com.safety.alerts;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.tinylog.Logger;
 
 @SpringBootApplication
 public class AlertsApplication {

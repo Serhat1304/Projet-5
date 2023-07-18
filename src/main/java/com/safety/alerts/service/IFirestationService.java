@@ -9,13 +9,13 @@ public interface IFirestationService {
 
     List<FirestationDTO> getAll();
 
-    FirestationDTO getFirestationByAddress(String address);
-
     FirestationDTO addFirestation(FirestationDTO firestationDTO);
 
-    FirestationDTO updateFirestation(String address, Integer station);
+    FirestationDTO updateFirestation(FirestationDTO firestationDTO);
 
-    void deleteFirestation(String address, Integer station);
+    FirestationDTO getFirestationByAddress(String address);
+
+    void deleteFirestationByAddress(String address);
 
 
 }

@@ -8,7 +8,7 @@ public interface IFirestationRepository {
 
     List<Firestation> getAll();
 
-    Firestation getFirestation(Integer station);
+    Firestation getFirestationByAddress(String address);
 
     Firestation addFirestation(Firestation firestation);
 
@@ -16,6 +16,5 @@ public interface IFirestationRepository {
 
     Firestation updateFirestation(Firestation firestation);
 
-    Firestation getFirestationByAddress(String address);
 
 }

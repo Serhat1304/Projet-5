@@ -1,8 +1,9 @@
-package com.safety.alerts.repository;
+package com.safety.alerts.repository.impl;
 
 import com.safety.alerts.model.Person;
-import lombok.extern.log4j.Log4j2;
+import com.safety.alerts.repository.IPersonRepository;
 import org.springframework.stereotype.Repository;
+import org.tinylog.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +11,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Repository
-@Log4j2
+
 public class PersonRepositoryImpl implements IPersonRepository {
 
     private List<Person> persons;
@@ -46,7 +47,7 @@ public class PersonRepositoryImpl implements IPersonRepository {
     @Override
     public Person updatePerson(Person person) {
         persons.set(persons.indexOf(person),person);
-        log.info("Updating person is successful");
+        Logger.info("Updating person is successful");
         return person;
     }
 

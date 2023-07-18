@@ -1,8 +1,6 @@
 package com.safety.alerts.service;
 
 import com.safety.alerts.dto.MedicalRecordDTO;
-import com.safety.alerts.model.MedicalRecord;
-import com.safety.alerts.model.Person;
 
 import java.util.List;
 
@@ -12,9 +10,9 @@ public interface IMedicalRecordService {
 
     MedicalRecordDTO getMedicalRecord(String firstName, String lastName);
 
-    MedicalRecordDTO addMedicalRecord(MedicalRecordDTO medicalRecordDTO);
+    void addMedicalRecord(MedicalRecordDTO medicalRecordDTO);
 
-    MedicalRecordDTO updateMedicalRecord(MedicalRecordDTO medicalRecordDTO);
+    void updateMedicalRecord(String firstName, String lastName, MedicalRecordDTO medicalRecordDTO);
 
     void deleteMedicalRecord(String firstName, String lastName);
 }

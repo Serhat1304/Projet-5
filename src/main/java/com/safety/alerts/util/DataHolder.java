@@ -9,4 +9,6 @@ import org.springframework.stereotype.Component;
 public class DataHolder {
     private Response response;
 
+    public DataHolder() {
+    }
 }

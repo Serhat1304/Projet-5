@@ -11,6 +11,6 @@ public interface IPersonService {
     PersonDTO getPersonByEmail(String email);
     PersonDTO addPerson(PersonDTO personDTO);
     PersonDTO updatePerson(PersonDTO personDTO);
-    void deletePerson(String firstName, String lastName);
+    void deletePerson(PersonDTO personDTO);
 
 }

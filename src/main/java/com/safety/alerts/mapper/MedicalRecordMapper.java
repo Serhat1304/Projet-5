@@ -18,7 +18,11 @@ public class MedicalRecordMapper {
     }
 
     public MedicalRecordDTO map(MedicalRecord medicalRecord) {
-        return modelMapper.map(medicalRecord, MedicalRecordDTO.class);
+        MedicalRecordDTO medicalRecordDTO = modelMapper.map(medicalRecord, MedicalRecordDTO.class);
+
+        medicalRecordDTO.setAge(calculateAge(medicalRecord.getBirthDate()));
+        
+        return medicalRecordDTO;
     }
 
     public MedicalRecord map(MedicalRecordDTO medicalRecordDTO) {

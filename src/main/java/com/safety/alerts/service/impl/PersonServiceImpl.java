@@ -1,8 +1,9 @@
-package com.safety.alerts.service;
+package com.safety.alerts.service.impl;
 
 import com.safety.alerts.dto.PersonDTO;
 import com.safety.alerts.mapper.PersonMapper;
 import com.safety.alerts.model.Person;
+import com.safety.alerts.service.IPersonService;
 import com.safety.alerts.util.DataHolder;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -11,7 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@Log4j2
+
 public class PersonServiceImpl implements IPersonService {
 
     private final PersonMapper personMapper;
@@ -66,8 +67,8 @@ public class PersonServiceImpl implements IPersonService {
     }
 
     @Override
-    public void deletePerson(String firstName, String lastName) {
+    public void deletePerson(PersonDTO personDTO) {
         List<Person> persons = dataHolder.getResponse().getPersons();
-        persons.removeIf(person -> person.getFirstName().equals(firstName) && person.getLastName().equals(lastName));
+        persons.removeIf(person -> person.getFirstName().equals(personDTO.getFirstName()) && person.getLastName().equals(personDTO.getLastName()));
     }
 }

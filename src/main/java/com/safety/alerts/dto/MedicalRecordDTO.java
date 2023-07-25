@@ -12,6 +12,5 @@ public class MedicalRecordDTO {
     private LocalDate birthDate;
     private List<String> medications;
     private List<String> allergies;
-    private LocalDate birthdate;
     private Integer age;
 }

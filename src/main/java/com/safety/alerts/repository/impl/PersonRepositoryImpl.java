@@ -3,55 +3,65 @@ package com.safety.alerts.repository.impl;
 import com.safety.alerts.model.Person;
 import com.safety.alerts.repository.IPersonRepository;
 import org.springframework.stereotype.Repository;
-import org.tinylog.Logger;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 @Repository
-
 public class PersonRepositoryImpl implements IPersonRepository {
 
     private List<Person> persons;
 
-    public PersonRepositoryImpl(List<Person> persons) {
-        this.persons = new ArrayList<>(persons);
+
+    @Override
+    public void saveAll(List<Person> personList) {
+        this.persons = personList;
     }
 
     @Override
     public List<Person> getAll() {
-        return new ArrayList<>(persons);
+        return persons;
     }
 
     @Override
-    public Person getPerson(String email) {
-        return persons.stream()
-                .filter(person -> Objects.equals(person.getEmail(), email))
-                .findFirst()
-                .orElse(null);
+    public Person getPerson(String firstName, String lastname) {
+        Optional<Person> optionalPerson = persons.stream()
+                .filter(person -> person.getFirstName().equals(firstName) && person.getLastName().equals(lastname))
+                .findFirst();
+        return optionalPerson.orElse(null);
     }
 
     @Override
-    public Person addPerson(Person person) {
+    public Person save(Person person) {
         persons.add(person);
         return person;
     }
 
     @Override
-    public void deletePerson(Person person) {
-        persons.remove(person);
+    public boolean delete(Person person) {
+        return persons.remove(person);
     }
 
     @Override
-    public Person updatePerson(Person person) {
-        persons.set(persons.indexOf(person),person);
-        Logger.info("Updating person is successful");
-        return person;
+    public Person update(Person person) {
+        Optional<Person> optionalPerson = persons.stream()
+                .filter(person1 -> person1.getFirstName().equals(person.getFirstName())
+                && person1.getLastName().equals(person.getLastName()))
+                .findFirst();
+        if (optionalPerson.isPresent()) {
+            Person person1 = optionalPerson.get();
+            person1.setPhone(person.getPhone());
+            person1.setCity(person.getCity());
+            person1.setZip(person.getZip());
+            person1.setEmail(person.getEmail());
+            person1.setAddress(person.getAddress());
+
+            return person1;
+        }
+        return null;
     }
 
-    @Override
+    /*@Override
     public List<Person> getPersonsByAddress(String address) {
         return persons.stream()
                 .filter(person -> Objects.equals(person.getAddress(), address))
@@ -71,5 +81,5 @@ public class PersonRepositoryImpl implements IPersonRepository {
         return persons.stream()
                 .filter(person -> Objects.equals(person.getFirstName(), firstName) && Objects.equals(person.getLastName(), lastName))
                 .collect(Collectors.toList());
-    }
+    }*/
 }

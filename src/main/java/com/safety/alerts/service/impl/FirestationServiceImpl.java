@@ -6,14 +6,13 @@ import com.safety.alerts.model.Firestation;
 import com.safety.alerts.repository.IFirestationRepository;
 import com.safety.alerts.service.IFirestationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
+import org.tinylog.Logger;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-
 public class FirestationServiceImpl implements IFirestationService {
 
     @Autowired
@@ -25,7 +24,8 @@ public class FirestationServiceImpl implements IFirestationService {
 
 
     @Override
-    public List<FirestationDTO> getAll() {
+    public List<FirestationDTO> getAllFirestation() {
+        Logger.info("Getting all firestation successful");
         return firestationRepository.getAll().stream()
                 .map(firestationMapper::map)
                 .collect(Collectors.toList());
@@ -35,25 +35,28 @@ public class FirestationServiceImpl implements IFirestationService {
     public FirestationDTO getFirestationByAddress(String address) {
         Firestation firestation = firestationRepository.getFirestationByAddress(address);
         if (firestation != null) {
+            Logger.info("Getting firestation by address :  {} is successful", address);
             return firestationMapper.map(firestation);
-        }
+        }Logger.error("Getting firestation by address : {} failed", address);
         return null;
     }
 
     @Override
-    public FirestationDTO addFirestation(FirestationDTO firestationDTO) {
+    public FirestationDTO saveFirestation(FirestationDTO firestationDTO) {
         Firestation firestation = firestationMapper.map(firestationDTO);
-        firestationRepository.addFirestation(firestation);
+        firestationRepository.save(firestation);
+        Logger.info("Saving firestation is successful");
         return firestationMapper.map(firestation);
     }
 
     @Override
     public FirestationDTO updateFirestation(FirestationDTO firestationDTO) {
         Firestation firestation = firestationMapper.map(firestationDTO);
-        Firestation newFirestation = firestationRepository.updateFirestation(firestation);
-        if (firestation != null) {
+        Firestation newFirestation = firestationRepository.update(firestation);
+        if (newFirestation != null) {
+            Logger.info("Updating firestation is successful");
             return firestationMapper.map(newFirestation);
-        }
+        }Logger.error("Updating firestation failed");
         return null;
     }
 
@@ -62,7 +65,7 @@ public class FirestationServiceImpl implements IFirestationService {
     public void deleteFirestationByAddress(String address) {
         Firestation firestation = firestationRepository.getFirestationByAddress(address);
         if (firestation != null) {
-            firestationRepository.deleteFirestation(firestation);
-        }
+            firestationRepository.delete(firestation);
+        }Logger.info("Delete firestation by address : {} is successful", address);
     }
 }

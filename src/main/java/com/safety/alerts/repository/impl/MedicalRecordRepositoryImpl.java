@@ -2,9 +2,7 @@ package com.safety.alerts.repository.impl;
 
 import com.safety.alerts.model.MedicalRecord;
 import com.safety.alerts.repository.IMedicalRecordRepository;
-import com.safety.alerts.util.DataHolder;
 import org.springframework.stereotype.Repository;
-import org.tinylog.Logger;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,10 +10,11 @@ import java.util.Optional;
 @Repository
 public class MedicalRecordRepositoryImpl implements IMedicalRecordRepository {
 
-    private final List<MedicalRecord> medicalRecords;
+    private List<MedicalRecord> medicalRecords;
 
-    public MedicalRecordRepositoryImpl(DataHolder dataHolder) {
-        this.medicalRecords = dataHolder.getResponse().getMedicalRecords();
+    @Override
+    public void saveAll(List<MedicalRecord> medicalRecordList) {
+        this.medicalRecords = medicalRecordList;
     }
 
     @Override
@@ -29,33 +28,22 @@ public class MedicalRecordRepositoryImpl implements IMedicalRecordRepository {
                 .filter(medicalRecord -> medicalRecord.getFirstName().equals(firstName) && medicalRecord.getLastName().equals(lastName))
                 .findFirst();
 
-        if(optionalMedicalRecord.isPresent()) {
-            return optionalMedicalRecord.get();
-        }
-
-        Logger.error("MedicalRecord not found by firstName {} and lastName{}", firstName , lastName);
-        return null;
+        return optionalMedicalRecord.orElse(null);
     }
 
     @Override
-    public MedicalRecord addMedicalRecord(MedicalRecord medicalRecord) {
+    public MedicalRecord save(MedicalRecord medicalRecord) {
         medicalRecords.add(medicalRecord);
         return medicalRecord;
     }
 
     @Override
-    public MedicalRecord deleteMedicalRecord(MedicalRecord medicalRecord) {
-        if(medicalRecords.remove(medicalRecord)) {
-            Logger.info("Medical record deleted {}", medicalRecord);
-            return medicalRecord;
-        }else {
-            Logger.error("Failed to delete medicalRecord : {}", medicalRecord);
-            return null;
-        }
+    public boolean delete(MedicalRecord medicalRecord) {
+        return medicalRecords.remove(medicalRecord);
     }
 
     @Override
-    public MedicalRecord updateMedicalRecord(MedicalRecord medicalRecord) {
+    public MedicalRecord update(MedicalRecord medicalRecord) {
         Optional<MedicalRecord> optionalMedicalRecord = medicalRecords.stream()
                 .filter(medicalRecord1 -> medicalRecord1.getFirstName().equals(medicalRecord.getFirstName())
                         && medicalRecord1.getLastName().equals(medicalRecord.getLastName()))
@@ -67,9 +55,8 @@ public class MedicalRecordRepositoryImpl implements IMedicalRecordRepository {
             medicalRecord1.setMedications(medicalRecord.getMedications());
             medicalRecord1.setAllergies(medicalRecord.getAllergies());
 
-            Logger.info("Updated MedicalRecord successful");
             return medicalRecord1;
-        }Logger.error("Updated MedicalRecord failed");
+        }
         return null;
 
     }

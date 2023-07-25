@@ -3,72 +3,70 @@ package com.safety.alerts.service.impl;
 import com.safety.alerts.dto.PersonDTO;
 import com.safety.alerts.mapper.PersonMapper;
 import com.safety.alerts.model.Person;
+import com.safety.alerts.repository.IPersonRepository;
 import com.safety.alerts.service.IPersonService;
 import com.safety.alerts.util.DataHolder;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.tinylog.Logger;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-
 public class PersonServiceImpl implements IPersonService {
 
-    private final PersonMapper personMapper;
-    private final DataHolder dataHolder;
+    @Autowired
+    private PersonMapper personMapper;
 
-    public PersonServiceImpl(PersonMapper personMapper, DataHolder dataHolder) {
-        this.personMapper = personMapper;
-        this.dataHolder = dataHolder;
-    }
+    @Autowired
+    private IPersonRepository personRepository;
+
 
     @Override
-    public List<PersonDTO> getAll() {
-        List<Person> persons = dataHolder.getResponse().getPersons();
-        return persons.stream()
+    public List<PersonDTO> getAllPerson() {
+        Logger.info("Getting all person is successful");
+        return personRepository.getAll().stream()
                 .map(personMapper::map)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public PersonDTO getPersonByEmail(String email) {
-        List<Person> persons = dataHolder.getResponse().getPersons();
-        return persons.stream()
-                .filter(person -> person.getEmail().equals(email))
-                .map(personMapper::map)
-                .findFirst()
-                .orElse(null);
+    public PersonDTO getPerson(String firstName, String lastName) {
+        Person person = personRepository.getPerson(firstName, lastName);
+        if (person != null) {
+            Logger.info("Getting person info by name {} is successful ", firstName, lastName);
+            return personMapper.map(person);
+        }Logger.error("Getting person info by name : {} failed", firstName, lastName);
+        return null;
     }
 
     @Override
-    public PersonDTO addPerson(PersonDTO personDTO) {
+    public PersonDTO savePerson(PersonDTO personDTO) {
         Person person = personMapper.map(personDTO);
-        dataHolder.getResponse().getPersons().add(person);
+        personRepository.save(person);
+        Logger.info("Save person is successful");
         return personMapper.map(person);
     }
 
     @Override
     public PersonDTO updatePerson(PersonDTO personDTO) {
-        List<Person> persons = dataHolder.getResponse().getPersons();
-        Person newPerson = persons.stream()
-                .filter(person -> person.getFirstName().equals(personDTO.getFirstName()) &&
-                        person.getLastName().equals(personDTO.getLastName()))
-                .findFirst()
-                .orElse(null);
+        Person person = personMapper.map(personDTO);
+        Person newPerson = personRepository.update(person);
         if (newPerson != null) {
-            newPerson.setAddress(personDTO.getAddress());
-            newPerson.setCity(personDTO.getCity());
-            newPerson.setEmail(personDTO.getEmail());
-            newPerson.setZip(personDTO.getZip());
-            newPerson.setPhone(personDTO.getPhone());
-        }
-        return personMapper.map(newPerson);
+            Logger.info("Update person is successful");
+            return personMapper.map(newPerson);
+        }Logger.error("Update person failed");
+        return null;
     }
 
     @Override
-    public void deletePerson(PersonDTO personDTO) {
-        List<Person> persons = dataHolder.getResponse().getPersons();
-        persons.removeIf(person -> person.getFirstName().equals(personDTO.getFirstName()) && person.getLastName().equals(personDTO.getLastName()));
+    public void deletePerson(String firstName, String lastName) {
+        Person person = personRepository.getPerson(firstName, lastName);
+        if (person != null) {
+            personRepository.delete(person);
+            Logger.info("Delete person is successful");
+        }Logger.error("Delete person failed");
     }
 }

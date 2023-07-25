@@ -9,17 +9,18 @@ import java.util.List;
 
 @RestController
 public class FirestationController {
+
     @Autowired
     private IFirestationService firestationService;
 
 
     @GetMapping("/firestations")
     public List<FirestationDTO> getFirestation() {
-        return firestationService.getAll();
+        return firestationService.getAllFirestation();
     }
     @PostMapping("/firestations")
     public FirestationDTO addFirestation(@RequestBody FirestationDTO firestationDTO) {
-        return firestationService.addFirestation(firestationDTO);
+        return firestationService.saveFirestation(firestationDTO);
     }
 
     @PutMapping("/firestations")

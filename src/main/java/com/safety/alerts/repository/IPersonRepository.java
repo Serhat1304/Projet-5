@@ -4,22 +4,16 @@ import com.safety.alerts.model.Person;
 
 import java.util.List;
 
-public interface IPersonRepository {
+public interface IPersonRepository extends ICrudRepository<Person> {
 
-    List<Person> getAll();
 
-    Person getPerson(String email);
 
-    Person addPerson(Person person);
+    Person getPerson(String firstName, String lastName);
 
-    void deletePerson(Person person);
-
-    Person updatePerson(Person person);
-
-    List<Person> getPersonsByAddress(String address);
+    /*List<Person> getPersonsByAddress(String address);
 
     List<String > getEmailByCity(String city);
 
-    List<Person> getPersonByFirstAndLastName(String firstName, String lastName);
+    List<Person> getPersonByFirstAndLastName(String firstName, String lastName);*/
 
 }

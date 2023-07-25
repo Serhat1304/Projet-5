@@ -7,9 +7,9 @@ import java.util.List;
 
 public interface IFirestationService {
 
-    List<FirestationDTO> getAll();
+    List<FirestationDTO> getAllFirestation();
 
-    FirestationDTO addFirestation(FirestationDTO firestationDTO);
+    FirestationDTO saveFirestation(FirestationDTO firestationDTO);
 
     FirestationDTO updateFirestation(FirestationDTO firestationDTO);
 

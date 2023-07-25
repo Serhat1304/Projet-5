@@ -8,6 +8,7 @@ import org.tinylog.Logger;
 public class AlertsApplication {
 
 	public static void main(String[] args) {
+		Logger.info("Lancement de l'application");
 		SpringApplication.run(AlertsApplication.class, args);
 	}
 

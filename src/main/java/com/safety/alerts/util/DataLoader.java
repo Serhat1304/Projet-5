@@ -45,7 +45,7 @@ public class DataLoader implements CommandLineRunner {
             dataHolder.setResponse(response);
 
             firestationRepository.saveAll(response.getFirestations());
-            medicalRecordRepository.saveAll(response.getMedicalRecords());
+            medicalRecordRepository.saveAll(response.getMedicalrecords());
             personRepository.saveAll(response.getPersons());
 
             Logger.info("Load Data successful");

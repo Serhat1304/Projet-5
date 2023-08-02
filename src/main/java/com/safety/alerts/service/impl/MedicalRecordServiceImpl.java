@@ -54,27 +54,6 @@ public class MedicalRecordServiceImpl implements IMedicalRecordService {
 
     @Override
     public MedicalRecordDTO updateMedicalRecord(String firstName, String lastName, MedicalRecordDTO medicalRecordDTO) {
-        MedicalRecord existingMedicalRecord = medicalRecordRepository.getMedicalRecord(firstName, lastName);
-
-        if (existingMedicalRecord != null) {
-            MedicalRecord updatedMedicalRecord = medicalRecordMapper.map(medicalRecordDTO);
-            existingMedicalRecord.setBirthDate(updatedMedicalRecord.getBirthDate());
-            existingMedicalRecord.setMedications(updatedMedicalRecord.getMedications());
-            existingMedicalRecord.setAllergies(updatedMedicalRecord.getAllergies());
-
-            MedicalRecord newMedicalRecord = medicalRecordRepository.update(existingMedicalRecord);
-
-            if (newMedicalRecord != null) {
-                Logger.info("Mise à jour réussie de l'enregistrement médical");
-                return medicalRecordMapper.map(newMedicalRecord);
-            }
-        }
-
-        Logger.error("Échec de la mise à jour de l'enregistrement médical");
-        return null;
-    }
-    /*@Override
-    public MedicalRecordDTO updateMedicalRecord(MedicalRecordDTO medicalRecordDTO) {
         MedicalRecord medicalRecord = medicalRecordMapper.map(medicalRecordDTO);
         MedicalRecord newMedicalRecord = medicalRecordRepository.update(medicalRecord);
         if (newMedicalRecord != null) {
@@ -82,7 +61,7 @@ public class MedicalRecordServiceImpl implements IMedicalRecordService {
             return medicalRecordMapper.map(newMedicalRecord);
         }Logger.error("Updating MedicalRecord failed");
         return null;
-    }*/
+    }
 
     @Override
     public void deleteMedicalRecord(String firstName, String lastName) {

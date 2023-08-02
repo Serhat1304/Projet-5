@@ -8,6 +8,6 @@ import java.util.List;
 public class Response {
     private List<Firestation> firestations;
     private List<Person> persons;
-    private List<MedicalRecord> medicalRecords;
+    private List<MedicalRecord> medicalrecords;
 
 }

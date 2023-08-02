@@ -18,19 +18,25 @@ public class MedicalRecordMapper {
     }
 
     public MedicalRecordDTO map(MedicalRecord medicalRecord) {
-        MedicalRecordDTO medicalRecordDTO = modelMapper.map(medicalRecord, MedicalRecordDTO.class);
+        return modelMapper.map(medicalRecord, MedicalRecordDTO.class);
+        /*MedicalRecordDTO medicalRecordDTO = modelMapper.map(medicalRecord, MedicalRecordDTO.class);
 
         medicalRecordDTO.setAge(calculateAge(medicalRecord.getBirthDate()));
-        
-        return medicalRecordDTO;
+
+        return medicalRecordDTO;*/
     }
 
     public MedicalRecord map(MedicalRecordDTO medicalRecordDTO) {
         return modelMapper.map(medicalRecordDTO, MedicalRecord.class);
     }
 
-    private Integer calculateAge( LocalDate birthDate) {
-        LocalDate currentDate = LocalDate.now();
-        return Period.between(birthDate, currentDate).getYears();
-    }
+    /*private Integer calculateAge(LocalDate birthDate) {
+
+        if (birthDate != null) {
+            LocalDate currentDate = LocalDate.now();
+            return Period.between(birthDate, currentDate).getYears();
+        } else {
+            return null;
+        }
+    }*/
 }

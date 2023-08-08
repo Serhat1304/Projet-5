@@ -1,16 +1,24 @@
 package com.safety.alerts.repository.impl;
 
+import com.safety.alerts.mapper.PersonMapper;
 import com.safety.alerts.model.Person;
+import com.safety.alerts.repository.IFirestationRepository;
 import com.safety.alerts.repository.IPersonRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 public class PersonRepositoryImpl implements IPersonRepository {
 
     private List<Person> persons;
+
+    private IFirestationRepository firestationRepository;
+
+    private PersonMapper personMapper;
 
 
     @Override
@@ -61,10 +69,10 @@ public class PersonRepositoryImpl implements IPersonRepository {
         return null;
     }
 
-    /*@Override
+    @Override
     public List<Person> getPersonsByAddress(String address) {
         return persons.stream()
-                .filter(person -> Objects.equals(person.getAddress(), address))
+                .filter(person -> person.getAddress().equals(address))
                 .collect(Collectors.toList());
     }
 
@@ -77,9 +85,27 @@ public class PersonRepositoryImpl implements IPersonRepository {
     }
 
     @Override
-    public List<Person> getPersonByFirstAndLastName(String firstName, String lastName) {
+    public List<Person> getPersonsByStation(Integer station) {
+        List<String> addresses = firestationRepository.getAddressByStation(station);
+        List<Person> personsByStation = new ArrayList<>();
+
+        for (String address : addresses) {
+            personsByStation.addAll(getPersonsByAddress(address));
+        }
+        return personsByStation;
+    }
+
+    @Override
+    public List<Person> getPersons(String firstName, String lastName) {
         return persons.stream()
-                .filter(person -> Objects.equals(person.getFirstName(), firstName) && Objects.equals(person.getLastName(), lastName))
+                .filter(person -> person.getFirstName().equals(firstName) && person.getLastName().equals(lastName))
                 .collect(Collectors.toList());
-    }*/
-}
+    }
+
+    @Override
+    public List<Person> getPersonByCity(String city) {
+        return persons.stream()
+                    .filter(person -> person.getCity().equals(city))
+                    .collect(Collectors.toList());
+        }
+    }

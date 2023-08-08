@@ -51,7 +51,7 @@ public class MedicalRecordRepositoryImpl implements IMedicalRecordRepository {
 
         if (optionalMedicalRecord.isPresent()) {
             MedicalRecord medicalRecord1 = optionalMedicalRecord.get();
-            medicalRecord1.setBirthDate(medicalRecord.getBirthDate());
+            medicalRecord1.setBirthdate(medicalRecord.getBirthdate());
             medicalRecord1.setMedications(medicalRecord.getMedications());
             medicalRecord1.setAllergies(medicalRecord.getAllergies());
 

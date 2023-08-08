@@ -7,6 +7,8 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.Period;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 @Component
 public class MedicalRecordMapper {
@@ -18,25 +20,26 @@ public class MedicalRecordMapper {
     }
 
     public MedicalRecordDTO map(MedicalRecord medicalRecord) {
-        return modelMapper.map(medicalRecord, MedicalRecordDTO.class);
-        /*MedicalRecordDTO medicalRecordDTO = modelMapper.map(medicalRecord, MedicalRecordDTO.class);
+        MedicalRecordDTO medicalRecordDTO = modelMapper.map(medicalRecord, MedicalRecordDTO.class);
 
-        medicalRecordDTO.setAge(calculateAge(medicalRecord.getBirthDate()));
+        medicalRecordDTO.setAge(calculateAge(medicalRecord.getBirthdate()));
 
-        return medicalRecordDTO;*/
+        return medicalRecordDTO;
     }
 
     public MedicalRecord map(MedicalRecordDTO medicalRecordDTO) {
         return modelMapper.map(medicalRecordDTO, MedicalRecord.class);
     }
 
-    /*private Integer calculateAge(LocalDate birthDate) {
-
-        if (birthDate != null) {
-            LocalDate currentDate = LocalDate.now();
+    public Integer calculateAge(String birthdate) {
+        LocalDate currentDate = LocalDate.now();
+        if (birthdate != null) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+            formatter = formatter.withLocale(Locale.FRANCE);
+            LocalDate birthDate = LocalDate.parse(birthdate, formatter);
             return Period.between(birthDate, currentDate).getYears();
         } else {
             return null;
         }
-    }*/
+    }
 }

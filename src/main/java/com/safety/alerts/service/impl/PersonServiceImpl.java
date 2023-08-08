@@ -3,10 +3,9 @@ package com.safety.alerts.service.impl;
 import com.safety.alerts.dto.PersonDTO;
 import com.safety.alerts.mapper.PersonMapper;
 import com.safety.alerts.model.Person;
+import com.safety.alerts.repository.IFirestationRepository;
 import com.safety.alerts.repository.IPersonRepository;
 import com.safety.alerts.service.IPersonService;
-import com.safety.alerts.util.DataHolder;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.tinylog.Logger;
@@ -22,6 +21,15 @@ public class PersonServiceImpl implements IPersonService {
 
     @Autowired
     private IPersonRepository personRepository;
+
+    @Autowired
+    private IFirestationRepository firestationRepository;
+
+    private List<Person> persons;
+
+    public PersonServiceImpl(List<Person> persons) {
+        this.persons = persons;
+    }
 
 
     @Override
@@ -68,5 +76,21 @@ public class PersonServiceImpl implements IPersonService {
             personRepository.delete(person);
             Logger.info("Delete person is successful");
         }Logger.error("Delete person failed");
+    }
+
+    @Override
+    public List<Person> getPersonsByAddress(String address) {
+        return persons.stream()
+                .filter(person -> person.getAddress().equals(address))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Person> getPersonsByStation(Integer station) {
+        List<String> addresses = firestationRepository.getAddressByStation(station);
+
+        return persons.stream()
+                .filter(person -> addresses.contains(person.getAddress()))
+                .collect(Collectors.toList());
     }
 }

@@ -11,4 +11,5 @@ public class PersonDTO {
     private String zip;
     private String phone;
     private String email;
+    private Integer age;
 }

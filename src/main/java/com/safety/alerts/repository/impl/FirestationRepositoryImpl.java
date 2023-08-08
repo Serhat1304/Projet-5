@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 public class FirestationRepositoryImpl implements IFirestationRepository {
@@ -37,6 +38,22 @@ public class FirestationRepositoryImpl implements IFirestationRepository {
     }
 
     @Override
+    public List<String> getAddressByStation(Integer station) {
+        return firestations.stream()
+                .filter(firestation -> firestation.getStation().equals(station))
+                .map(Firestation::getAddress)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Firestation getFirestationByStation(Integer station) {
+            Optional<Firestation> optionalFirestation = firestations.stream()
+                    .filter(firestation -> firestation.getStation().equals(station))
+                    .findFirst();
+            return optionalFirestation.orElse(null);
+        }
+
+    @Override
     public Firestation save(Firestation firestation) {
         firestations.add(firestation);
         return firestation;
@@ -51,5 +68,7 @@ public class FirestationRepositoryImpl implements IFirestationRepository {
         }
         return null;
     }
+
+
 
 }
